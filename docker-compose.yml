@@ -1,0 +1,35 @@
+services:
+  db-servicio:
+    image: mysql:8.0
+    container_name: mysql_servidor_mod4
+    environment:
+      MYSQL_ROOT_PASSWORD: clave_maestra_rootud
+      MYSQL_DATABASE: universidad_backend
+      MYSQL_USER: desarrollador
+      MYSQL_PASSWORD: password_seguro_123
+    ports:
+      - "3309:3306"
+    networks:
+      - red_interna_proyecto
+    volumes:
+      - persistencia_db:/var/lib/mysql
+
+  workspace-java:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno_programacion_mod4
+    ports:
+      - "8084:8080"
+    depends_on:
+      - db-servicio
+    networks:
+      - red_interna_proyecto
+    command: bash -c "cd demo && mvn spring-boot:run"
+    volumes:
+      - ./codigo-fuente:/app
+    working_dir: /app
+
+networks:
+  red_interna_proyecto:
+
+volumes:
+  persistencia_db:
